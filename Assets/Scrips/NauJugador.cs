@@ -9,6 +9,10 @@ public class NauJugador : MonoBehaviour
 
     private Vector2 minPantalla, maxPantalla;
 
+    [SerializeField]
+    private GameObject prefabProjectil;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,11 +21,11 @@ public class NauJugador : MonoBehaviour
         minPantalla = Camera.main.ViewportToWorldPoint(new Vector2(0, 0));
         maxPantalla = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
 
-        float midaMeitatImatgeX = GetComponent<SpriteRenderer>().sprite.bounds.size.x / 2;
-        float midaMeitatImatgeY = GetComponent<SpriteRenderer>().sprite.bounds.size.y / 2;
+        float midaMeitatImatgeX = GetComponent<SpriteRenderer>().bounds.size.x / 2;
+        float midaMeitatImatgeY = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y / 2;
         //minPantalla.x = minPantalla.x + 0.75f;
         //minPantalla.x += 0.75f;
-        minPantalla.x += midaMeitatImatgeX
+        minPantalla.x += midaMeitatImatgeX;
         maxPantalla.x -= midaMeitatImatgeX;
         minPantalla.y += midaMeitatImatgeY;
         maxPantalla.y -= midaMeitatImatgeY;
@@ -32,12 +36,29 @@ public class NauJugador : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MovimentNau();
+        DisparaProjectil();        
+    }
+
+    private void DisparaProjectil()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            GameObject projectil= Instantiate(prefabProjectil);
+            projectil.transform.position = transform.position;
+        }
+
+
+    }
+
+    private void MovimentNau()
+    {
         float direccioIndicadaX = Input.GetAxisRaw("Horizontal");
         float direccioIndicadaY = Input.GetAxisRaw("Vertical");
         //Debug.Log("X: " + direccioIndicadaX + " - Y: " + direccioIndicadaY);
 
         Vector2 direccioIndicada = new Vector2(direccioIndicadaX, direccioIndicadaY).normalized;
-        
+
         Vector2 novaPos = transform.position;
         novaPos = novaPos + direccioIndicada * _vel * Time.deltaTime;
 
@@ -45,5 +66,6 @@ public class NauJugador : MonoBehaviour
         novaPos.y = Mathf.Clamp(novaPos.y, minPantalla.y, maxPantalla.y);
 
         transform.position = novaPos;
+
     }
 }
